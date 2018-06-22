@@ -5,7 +5,7 @@ public class PlayNavalBattle {
         System.out.println();
         Battlefield play=new Battlefield();
         play.drawField();
-        int toBeDeployedShips=play.numberOfShips;
+        int toBeDeployedShips = Battlefield.numberOfShips;
         int deployedShips=1;
         while (toBeDeployedShips>0) {
             System.out.println("Dammi la x della prossima nave coordinate della prossima nave");
@@ -13,7 +13,7 @@ public class PlayNavalBattle {
             int x=input.nextInt();
             System.out.println("Dammi la y della prossima nave coordinate della prossima nave");
             int y=input.nextInt();
-            if (play.isAvailable(x,y) ==true){
+            if ((play.isValid(x, y)) && (play.isAvailable(x, y))) {
                 play.recordPlayerShip(x,y);
                 System.out.println("Ship # "+deployedShips+"...Deployed");
                 toBeDeployedShips--;

@@ -46,15 +46,24 @@ public class Battlefield {
 
     }
     public boolean isValid(int x,int y){
-    return x < field.length && x >= 0 && y < field.length && y >= 0;
-    }
-    public boolean isAvailable(int x, int y) {
-        if (isValid(x,y)){
-            return (field[x][y].equals("@") || (field[x][y].equals("2")));
+        if (x < field.length && x >= 0 && y < field.length && y >= 0) {
+            return true;
         } else {
             return false;
         }
-
     }
+    public boolean isAvailable(int x, int y) {
+
+        if (field[x][y] != null) {
+            if (field[x][y].equals("@") || (field[x][y].equals("2"))) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
 
 }
