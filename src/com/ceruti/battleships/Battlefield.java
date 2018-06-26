@@ -3,52 +3,74 @@ package com.ceruti.battleships;
 import java.util.Random;
 
 public class Battlefield {
-    private int fieldHeight;
-    private int fieldWidth;
+
+
+    private int fieldRows;
+    private int fieldCols;
     private String[][] field;
     private int computerShips;
     private int playerShips;
     private int numberOfShips;
-    Battlefield(int width, int height, int ships) {
-        this.fieldWidth = width;
-        this.fieldHeight = height;
+
+    Battlefield(int rows, int cols, int ships) {
+        this.fieldRows = rows;
+        this.fieldCols = cols;
         this.numberOfShips = ships;
         this.computerShips = ships;
         this.playerShips = ships;
-        this.field = new String[width][height];
-        for (int i = 0; i < this.getFieldWidth(); i++) {
-            for (int j = 0; j < this.getFieldHeight(); j++) {
-                this.field[i][j] = "0";
-            }
-        }
+        initWater();
     }
+
     Battlefield() {
-        this.fieldWidth = 10;
-        this.fieldHeight = 10;
+        this.fieldRows = 10;
+        this.fieldCols = 10;
         this.numberOfShips = 5;
         this.computerShips = 5;
         this.playerShips = 5;
-        for (int i = 0; i < this.getFieldWidth(); i++) {
-            for (int j = 0; j < this.getFieldHeight(); j++) {
-                this.field[i][j] = "0";
-            }
-        }
+        initWater();
     }
+
     public int getComputerShips() {
-        return this.computerShips;
+        return computerShips;
     }
+
+    public void setComputerShips(int computerShips) {
+        this.computerShips = computerShips;
+    }
+
     public int getPlayerShips() {
-        return this.playerShips;
+        return playerShips;
     }
-    public int getFieldWidth() {
-        return fieldWidth;
+
+    public void setPlayerShips(int playerShips) {
+        this.playerShips = playerShips;
     }
-    public int getFieldHeight() {
-        return fieldHeight;
-    }
+
     public int getNumberOfShips() {
         return numberOfShips;
     }
+
+    public void setNumberOfShips(int numberOfShips) {
+        this.numberOfShips = numberOfShips;
+    }
+
+    public int getFieldRows() {
+        return fieldRows;
+    }
+
+    public int getFieldCols() {
+        return fieldCols;
+    }
+
+    private void initWater() {
+        this.field = new String[this.fieldRows][this.fieldCols];
+        for (int row = 0; row < this.getFieldRows(); row++) {
+            for (int col = 0; col < this.getFieldCols(); col++) {
+                this.field[row][col] = " ";
+            }
+        }
+    }
+
 
     public void decreseComputerShips() {
         this.computerShips--;
@@ -58,25 +80,26 @@ public class Battlefield {
         this.playerShips--;
     }
 
-    //TODO aggiungere stampa numero di navi ancora vive
+
     public void drawField(boolean revealed) {
         System.out.println("**** Welcome to Battle Ships Game! ****");
-        System.out.println("Battle field empty!");
-        System.out.print("   0123456789\n");
-        for (int i = 0; i < this.getFieldWidth(); i++) {
-            System.out.print(i + " |");
-            for (int j = 0; j < this.getFieldHeight(); j++) {
-                switch (this.field[i][j]) {
-                        case "0":
+        //System.out.println("Battle field empty!");
+        //TODO rendere dinamica la prima riga e anche l'ultima
+        // System.out.print("   0123456789\n");
+        for (int row = 0; row < this.getFieldRows(); row++) {
+            System.out.print("\t\t" + row + " |");
+            for (int col = 0; col < this.getFieldCols(); col++) {
+                switch (this.field[row][col]) {
+                    case " ":
+                        System.out.print(" ");
+                        break;
+                    case "2":
+                        if (revealed) {
+                            System.out.print("2");
+                        } else {
                             System.out.print(" ");
-                            break;
-                        case "2":
-                            if (revealed) {
-                                System.out.print("2");
-                            } else {
-                                System.out.print(" ");
-                            }
-                            break;
+                        }
+                        break;
                     case "-":
                         System.out.print("-");
                         break;
@@ -88,58 +111,99 @@ public class Battlefield {
                         break;
                     case "@":
                         System.out.print("@");
-                            break;
+                        break;
+                    default:
+                        System.out.print("MESSAGGIO DI ERRORE STRANO");
                     }
                 }
-            System.out.print("| " + i);
+            System.out.print("| " + row);
             System.out.println();
         }
-        System.out.print("   0123456789\n");
+        System.out.print("\t\t   0123456789\n");
         System.out.println("Actual Score * * * * * * * * *  \nPlayer: " + this.getPlayerShips() + "\nComputer: " + this.getComputerShips());
         System.out.println("Actual Score * * * * * * * * *  ");
     }
-    public void recordPlayerShip(int x, int y) {
-        this.field[x][y] = "@";
+
+    public void recordPlayerShip(int row, int col) {
+        this.field[row][col] = "@";
     }
-    public void recordComputerShip(int x, int y) {
-        this.field[x][y] = "2";
+
+    public void recordComputerShip(int row, int col) {
+        this.field[row][col] = "2";
     }
     public void deployComputerShips() {
         int i = 1;
         while (i <= this.numberOfShips) {
-            int x = new Random().nextInt(10);
-            int y = new Random().nextInt(10);
-            if (isAvailable(x, y)) {
-                recordComputerShip(x, y);
+            int row = new Random().nextInt(this.getFieldRows());
+            int col = new Random().nextInt(this.getFieldCols());
+            if (isAvailable(row, col)) {
+                recordComputerShip(row, col);
                 System.out.println("Computer Ship # " + i + "Deployed");
                 i++;
             }
         }
     }
-    public void setShotResult(int x, int y) {
-        switch (this.field[x][y]) {
-            case "0":
+
+    public void setShotResult(int row, int col) {
+        switch (this.field[row][col]) {
+            case " ": {
                 System.out.println("Sorry, you missed");
-                this.field[x][y] = "-";
+                this.field[row][col] = "-";
                 break;
-            case "2":
+            }
+            case "2": {
                 System.out.println("Boom! You sunk the ship!");
                 this.decreseComputerShips();
-                this.field[x][y] = "!";
+                this.field[row][col] = "!";
                 break;
-            case "@":
+            }
+            case "@": {
                 System.out.println("Oh no, you sunk your own ship :(");
                 this.decreasePlayerShips();
-                this.field[x][y] = "x";
+                this.field[row][col] = "x";
                 break;
+            }
             default:
                 break;
         }
     }
-    public boolean isValid(int x, int y) {
-        return (x < field.length && x >= 0 && y < field.length && y >= 0);
+
+    public void setComputerShotResult(int row, int col) {
+        switch (this.field[row][col]) {
+            case "0": {
+                this.field[row][col] = " ";
+                System.out.println("Wow, COMPUTER MISSED!");
+                break;
+            }
+            case "2": {
+                this.decreseComputerShips();
+                this.field[row][col] = "!";
+                break;
+            }
+            case "@": {
+                this.decreasePlayerShips();
+                this.field[row][col] = "x";
+                System.out.println("COMPUTER sunk yout SHIP!");
+                break;
+            }
+            default:
+                break;
+        }
     }
-    public boolean isAvailable(int x, int y) {
-        return !(field[x][y].equals("@") || (field[x][y].equals("2")));
+
+
+    public boolean isValid(int row, int col) {
+        return (row < field.length && row >= 0 && col < field.length && col >= 0);
+    }
+
+    public boolean isAvailable(int row, int col) {
+        return !(field[row][col].equals("@") || (field[row][col].equals("2")));
+    }
+
+    public int[] getRandomShot() {
+        int result[] = new int[2];
+        result[0] = new Random().nextInt(this.getFieldRows());
+        result[1] = new Random().nextInt(this.getFieldCols());
+        return result;
     }
 }
