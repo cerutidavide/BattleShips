@@ -35,11 +35,7 @@ public class PlayNavalBattle {
             } else {
                 System.out.println("Invalid ship placement please retry!");
             }
+            play.drawField(false);
         }
-
-
-
-
-
     }
 }
